@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="robotic_sldasm">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0 -2.12772917167606E-18 0.03"
+        rpy="0 0 0" />
+      <mass
+        value="0.814300815810474" />
+      <inertia
+        ixx="0.000570010571067332"
+        ixy="0"
+        ixz="1.88833242477094E-36"
+        iyy="0.000570010571067332"
+        iyz="1.69225837313788E-36"
+        izz="0.00065144065264838" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.866666666666667 0.909803921568627 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="-3.00707779693663E-17 0.0129188934119666 -0.0201724137931035"
+        rpy="0 0 0" />
+      <mass
+        value="0.65596454606955" />
+      <inertia
+        ixx="0.000387701545257386"
+        ixy="-2.52105894300884E-19"
+        ixz="-2.79017645747248E-19"
+        iyy="0.000525740340120825"
+        iyz="1.31814046330909E-05"
+        izz="0.000357779924096717" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.866666666666667 0.909803921568627 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.12"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14159265359"
+      upper="3.14159265359"
+      effort="10.0"
+      velocity="2.0" />
+  </joint>
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="0.09 1.38777878078145E-17 0.01"
+        rpy="0 0 0" />
+      <mass
+        value="0.77745138775583" />
+      <inertia
+        ixx="0.000279328904100543"
+        ixy="8.88249448649825E-19"
+        ixz="-1.4656606478674E-20"
+        iyy="0.00487075602349334"
+        iyz="-1.15056687303063E-21"
+        izz="0.00509825483507683" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.866666666666667 0.909803921568627 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="link1" />
+    <child
+      link="link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57079632679"
+      upper="1.57079632679"
+      effort="10.0"
+      velocity="2.0" />
+  </joint>
+  <link
+    name="link3">
+    <inertial>
+      <origin
+        xyz="0.09 0 -0.01"
+        rpy="0 0 0" />
+      <mass
+        value="0.77745138775583" />
+      <inertia
+        ixx="0.000279328904100543"
+        ixy="6.90413085475581E-19"
+        ixz="-2.59910488221818E-20"
+        iyy="0.00487075602349334"
+        iyz="-1.06681483600964E-21"
+        izz="0.00509825483507683" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.866666666666667 0.909803921568627 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0.18 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="link2" />
+    <child
+      link="link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57079632679"
+      upper="1.57079632679"
+      effort="10.0"
+      velocity="2.0" />
+  </joint>
+  <link
+    name="link4">
+    <inertial>
+      <origin
+        xyz="0.00321428571428573 -1.38777878078145E-17 0.0145524874851272"
+        rpy="0 0 0" />
+      <mass
+        value="0.390993645686776" />
+      <inertia
+        ixx="0.000155942870643766"
+        ixy="-1.02117640798283E-19"
+        ixz="7.783646153365E-06"
+        iyy="0.000204328334297505"
+        iyz="3.58320027597311E-20"
+        izz="0.000287130971387378" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.866666666666667 0.909803921568627 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotic_sldasm_ros2_humble/meshes/link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint4"
+    type="revolute">
+    <origin
+      xyz="0.18 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="link3" />
+    <child
+      link="link4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57079632679"
+      upper="1.57079632679"
+      effort="10.0"
+      velocity="2.0" />
+  </joint>
+</robot>
