@@ -38,7 +38,7 @@ ros2 launch robotic_tf_demo tf_static.launch.py
 
 该 launch 会同时启动：
 
-- MuJoCo `scene_terrain.xml` 图形界面（场地、箱位、平台和机械臂，不加载机器狗）
+- MuJoCo `scene_terrain.xml` 图形界面（场地、箱位、平台和机械臂）
 - `mujoco_tf_bridge`：发布 `map → base_footprint`、`base_footprint → base_link`
   和 `/joint_states`
 - 8 个 `map → targetN` 静态 TF
