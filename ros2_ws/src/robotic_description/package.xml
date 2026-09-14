@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>robotic_description</name>
+  <version>0.1.0</version>
+  <description>Robot description assets for the robotic tutorial: URDF, meshes, and MuJoCo models.</description>
+  <maintainer email="teaching@example.com">Teaching Project</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

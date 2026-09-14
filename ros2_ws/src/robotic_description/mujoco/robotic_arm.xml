@@ -1,0 +1,233 @@
+<mujoco model="robotic_arm">
+  <!-- Single source of truth for the teaching arm.
+       Defines the mocap base_footprint platform, the base_link..link4 chain,
+       the joint1..joint4 joint interface and the direct-torque actuators.
+
+       Included by:
+       - robotic_torque.xml (standalone direct-torque simulation)
+       - robotic_tf_demo's scene_terrain.xml (TF teaching scene)
+
+       Joint axes are all +Z so positive q and positive MDH theta share a sign.
+       Damping is a didactic default; replace with measured values for hardware
+       or dynamics studies. -->
+
+  <compiler angle="radian" />
+
+  <default>
+    <joint
+      type="hinge"
+      limited="true"
+      damping="0.05"
+      frictionloss="0"
+      armature="0" />
+    <geom
+      condim="3"
+      contype="1"
+      conaffinity="1"
+      friction="0 0 0" />
+  </default>
+
+  <asset>
+    <mesh name="base_link_mesh" content_type="model/stl" file="../meshes/base_link.STL" />
+    <mesh name="link1_mesh" content_type="model/stl" file="../meshes/link1.STL" />
+    <mesh name="link2_mesh" content_type="model/stl" file="../meshes/link2.STL" />
+    <mesh name="link3_mesh" content_type="model/stl" file="../meshes/link3.STL" />
+    <mesh name="link4_mesh" content_type="model/stl" file="../meshes/link4.STL" />
+  </asset>
+
+  <worldbody>
+    <!-- A kinematic, translation-only teaching platform (mocap). Mouse
+         perturbation is the only way to move it; it has no dynamic joints.
+         The world position is baked into the model and matches the map frame
+         convention of the TF teaching scene. -->
+    <body name="base_footprint" mocap="true" pos="0 0.5 0.65">
+      <geom
+        name="floating_platform"
+        type="box"
+        size="0.32 0.24 0.04"
+        rgba="0.15 0.35 0.65 1"
+        contype="0"
+        conaffinity="0" />
+
+      <!-- Fixed mounting transform: base_footprint -> base_link = (0, 0, 0.15). -->
+      <body name="base_link" pos="0 0 0.15">
+        <inertial
+          pos="0 -2.12772917167606e-18 0.03"
+          mass="0.814300815810474"
+          fullinertia="0.000570010571067332 0.000570010571067332 0.00065144065264838 0 1.88833242477094e-36 1.69225837313788e-36" />
+        <geom
+          name="base_link_visual"
+          type="mesh"
+          mesh="base_link_mesh"
+          rgba="0.8666666667 0.9098039216 1 1"
+          contype="0"
+          conaffinity="0"
+          group="1" />
+        <geom
+          name="base_link_collision"
+          type="mesh"
+          mesh="base_link_mesh"
+          contype="1"
+          conaffinity="1"
+          group="3"
+          rgba="0.2 0.8 0.2 0.15" />
+
+        <body name="link1" pos="0 0 0.12">
+          <inertial
+            pos="-3.00707779693663e-17 0.0129188934119666 -0.0201724137931035"
+            mass="0.65596454606955"
+            fullinertia="0.000387701545257386 0.000525740340120825 0.000357779924096717 -2.52105894300884e-19 -2.79017645747248e-19 1.31814046330909e-05" />
+          <joint
+            name="joint1"
+            axis="0 0 1"
+            range="-3.14159265359 3.14159265359" />
+          <geom
+            name="link1_visual"
+            type="mesh"
+            mesh="link1_mesh"
+            rgba="0.8666666667 0.9098039216 1 1"
+            contype="0"
+            conaffinity="0"
+            group="1" />
+          <geom
+            name="link1_collision"
+            type="mesh"
+            mesh="link1_mesh"
+            contype="1"
+            conaffinity="1"
+            group="3"
+            rgba="0.2 0.8 0.2 0.15" />
+
+          <!-- URDF joint2 origin rpy="1.5708 0 0". -->
+          <body
+            name="link2"
+            pos="0 0 0"
+            quat="0.7071067812 0.7071067812 0 0">
+            <inertial
+              pos="0.09 1.38777878078145e-17 0.01"
+              mass="0.77745138775583"
+              fullinertia="0.000279328904100543 0.00487075602349334 0.00509825483507683 8.88249448649825e-19 -1.4656606478674e-20 -1.15056687303063e-21" />
+            <joint
+              name="joint2"
+              axis="0 0 1"
+              range="0 3.14159265359" />
+            <geom
+              name="link2_visual"
+              type="mesh"
+              mesh="link2_mesh"
+              rgba="0.8666666667 0.9098039216 1 1"
+              contype="0"
+              conaffinity="0"
+              group="1" />
+            <geom
+              name="link2_collision"
+              type="mesh"
+              mesh="link2_mesh"
+              contype="1"
+              conaffinity="1"
+              group="3"
+              rgba="0.2 0.8 0.2 0.15" />
+
+            <body name="link3" pos="0.18 0 0">
+              <inertial
+                pos="0.09 0 -0.01"
+                mass="0.77745138775583"
+                fullinertia="0.000279328904100543 0.00487075602349334 0.00509825483507683 6.90413085475581e-19 -2.59910488221818e-20 -1.06681483600964e-21" />
+              <joint
+                name="joint3"
+                axis="0 0 1"
+                range="-2.51327412287 2.51327412287" />
+              <geom
+                name="link3_visual"
+                type="mesh"
+                mesh="link3_mesh"
+                rgba="0.8666666667 0.9098039216 1 1"
+                contype="0"
+                conaffinity="0"
+                group="1" />
+              <geom
+                name="link3_collision"
+                type="mesh"
+                mesh="link3_mesh"
+                contype="1"
+                conaffinity="1"
+                group="3"
+                rgba="0.2 0.8 0.2 0.15" />
+
+              <body name="link4" pos="0.18 0 0">
+                <inertial
+                  pos="0.00321428571428573 -1.38777878078145e-17 0.0145524874851272"
+                  mass="0.390993645686776"
+                  fullinertia="0.000155942870643766 0.000204328334297505 0.000287130971387378 -1.02117640798283e-19 7.783646153365e-06 3.58320027597311e-20" />
+                <joint
+                  name="joint4"
+                  axis="0 0 1"
+                  range="-2.09439510239 2.09439510239" />
+                <geom
+                  name="link4_visual"
+                  type="mesh"
+                  mesh="link4_mesh"
+                  rgba="0.8666666667 0.9098039216 1 1"
+                  contype="0"
+                  conaffinity="0"
+                  group="1" />
+                <geom
+                  name="link4_collision"
+                  type="mesh"
+                  mesh="link4_mesh"
+                  contype="1"
+                  conaffinity="1"
+                  group="3"
+                  rgba="0.2 0.8 0.2 0.15" />
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- Adjacent links are connected by joints and do not need self-contact. -->
+  <contact>
+    <exclude body1="base_link" body2="link1" />
+    <exclude body1="link1" body2="link2" />
+    <exclude body1="link2" body2="link3" />
+    <exclude body1="link3" body2="link4" />
+  </contact>
+
+  <!-- Ideal direct torque control: ctrl is joint torque in N*m because gear=1. -->
+  <actuator>
+    <motor
+      name="tau_joint1"
+      joint="joint1"
+      gear="1"
+      ctrllimited="true"
+      ctrlrange="-10 10"
+      forcelimited="true"
+      forcerange="-10 10" />
+    <motor
+      name="tau_joint2"
+      joint="joint2"
+      gear="1"
+      ctrllimited="true"
+      ctrlrange="-10 10"
+      forcelimited="true"
+      forcerange="-10 10" />
+    <motor
+      name="tau_joint3"
+      joint="joint3"
+      gear="1"
+      ctrllimited="true"
+      ctrlrange="-10 10"
+      forcelimited="true"
+      forcerange="-10 10" />
+    <motor
+      name="tau_joint4"
+      joint="joint4"
+      gear="1"
+      ctrllimited="true"
+      ctrlrange="-10 10"
+      forcelimited="true"
+      forcerange="-10 10" />
+  </actuator>
+</mujoco>

@@ -1,0 +1,261 @@
+<mujoco model="task_competition_scene">
+  <!-- The teaching scene reuses the field and target assets without the Black quadruped. -->
+
+  <!-- The robotic arm (platform + arm chain + actuators) is provided by the
+       robotic_description package. The viewer replaces this placeholder with
+       the installed robotic_arm.xml path before loading. -->
+  <include file="__ARM_MODEL_PATH__" />
+
+  <compiler angle="radian" coordinate="local"/>
+  <option timestep="0.01" gravity="0 0 0" iterations="40" integrator="RK4"/>
+
+  <visual>
+    <global azimuth="145" elevation="-28"/>
+    <headlight ambient="0.10 0.10 0.12" diffuse="0.38 0.38 0.38" specular="0.03 0.03 0.03"/>
+    <rgba haze="0.88 0.92 0.98 1.0"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.60 0.70 0.88" rgb2="0.92 0.95 0.99" width="512" height="3072"/>
+
+    <texture name="food_label_tex" type="2d" file="assets/food_label.png"/>
+    <texture name="tool_label_tex" type="2d" file="assets/tool_label.png"/>
+    <texture name="instrument_label_tex" type="2d" file="assets/instrument_label.png"/>
+    <texture name="medical_label_tex" type="2d" file="assets/medical_label.png"/>
+    <texture name="display_board_tex" type="2d" file="assets/display_board.png"/>
+    <mesh name="label_quad_mesh" file="assets/label_quad.obj" inertia="shell"/>
+    <mesh name="display_quad_mesh" file="assets/display_quad.obj" inertia="shell"/>
+
+    <material name="outside_floor_mat" rgba="0.82 0.82 0.84 1" reflectance="0.02" shininess="0.01" specular="0.02"/>
+    <material name="floor_yellow" rgba="1 1 0 1" emission="0.10" reflectance="0.0" shininess="0.0" specular="0.0"/>
+    <material name="wall_shell" rgba="0.82 0.83 0.84 1" reflectance="0.02" shininess="0.02" specular="0.03"/>
+    <material name="wall_orange" rgba="0.8745 0.4588 0 1" emission="0.08" reflectance="0.01" shininess="0.01" specular="0.01"/>
+    <material name="line_black" rgba="0 0 0 1" emission="0.0"/>
+    <material name="line_red" rgba="1 0 0 1" emission="0.10"/>
+    <material name="zone_green" rgba="0.50 0.78 0.28 1" emission="0.10"/>
+    <material name="zone_gray" rgba="0.54 0.54 0.54 1" emission="0.08"/>
+    <material name="zone_blue" rgba="0.18 0.33 0.63 1" emission="0.08"/>
+    <material name="zone_red" rgba="0.85 0.12 0 1" emission="0.10"/>
+    <material name="speed_black" rgba="0 0 0 1"/>
+    <material name="speed_yellow" rgba="1 0.82 0.1 1" emission="0.06"/>
+    <material name="box_cardboard" rgba="0.76 0.66 0.48 1" reflectance="0.01" specular="0.0"/>
+    <material name="box_food_label" texture="food_label_tex" texuniform="true" rgba="1 1 1 1"/>
+    <material name="box_tool_label" texture="tool_label_tex" texuniform="true" rgba="1 1 1 1"/>
+    <material name="box_instrument_label" texture="instrument_label_tex" texuniform="true" rgba="1 1 1 1"/>
+    <material name="box_medical_label" texture="medical_label_tex" texuniform="true" rgba="1 1 1 1"/>
+    <material name="display_board_mat" texture="display_board_tex" texuniform="true" rgba="1 1 1 1"/>
+    <material name="display_board_back" rgba="0.72 0.74 0.78 1"/>
+  </asset>
+
+  <default>
+    <default class="field_geom">
+      <geom condim="3" friction="0.28 0.01 0.001" rgba="1 1 1 1"/>
+    </default>
+    <default class="box_geom">
+      <geom type="box" size="0.125 0.125 0.125" mass="0.2" condim="3" friction="0.02 0.003 0.0002" rgba="1 1 1 1"/>
+      <joint type="free" damping="0.001"/>
+    </default>
+    <default class="label_face_mesh">
+      <geom type="mesh" mesh="label_quad_mesh" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+    </default>
+    <default class="display_face_mesh">
+      <geom type="mesh" mesh="display_quad_mesh" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <light name="sun" pos="1.5 -0.5 6.0" dir="-0.2 0.1 -1" directional="true" diffuse="0.50 0.48 0.44" castshadow="false"/>
+    <light name="fill_front" pos="0 -4 3.5" dir="0 1 -0.4" directional="true" diffuse="0.20 0.22 0.24" castshadow="false"/>
+    <light name="fill_back" pos="0 7 4.0" dir="0 -1 -0.5" directional="true" diffuse="0.18 0.18 0.20" castshadow="false"/>
+
+    <geom name="outside_floor" class="field_geom" type="plane" pos="0 0 -0.08" size="10 10 0.1" material="outside_floor_mat" rgba="0.82 0.82 0.84 1"/>
+    <geom name="competition_floor" class="field_geom" type="box" pos="0 2.5 -0.03" size="2.0 3.0 0.03" material="floor_yellow" rgba="1 1 0 1"/>
+
+    <!-- Field walls: single task arena, 6m x 4m, front opening 1m -->
+    <geom name="wall_left" class="field_geom" type="box" pos="-2.0 2.5 0.4" size="0.025 3.0 0.4" material="wall_shell" rgba="0.82 0.83 0.84 1"/>
+    <geom name="wall_right" class="field_geom" type="box" pos="2.0 2.5 0.4" size="0.025 3.0 0.4" material="wall_shell" rgba="0.82 0.83 0.84 1"/>
+    <geom name="wall_back" class="field_geom" type="box" pos="0.0 5.5 0.4" size="2.0 0.025 0.4" material="wall_shell" rgba="0.82 0.83 0.84 1"/>
+    <geom name="wall_front_left" class="field_geom" type="box" pos="-1.25 -0.5 0.4" size="0.75 0.025 0.4" material="wall_shell" rgba="0.82 0.83 0.84 1"/>
+    <geom name="wall_front_right" class="field_geom" type="box" pos="1.25 -0.5 0.4" size="0.75 0.025 0.4" material="wall_shell" rgba="0.82 0.83 0.84 1"/>
+
+    <geom name="wall_left_inner" type="box" pos="-1.972 2.5 0.4" size="0.003 3.0 0.4" material="wall_orange" rgba="0.8745 0.4588 0 1" contype="0" conaffinity="0"/>
+    <geom name="wall_right_inner" type="box" pos="1.972 2.5 0.4" size="0.003 3.0 0.4" material="wall_orange" rgba="0.8745 0.4588 0 1" contype="0" conaffinity="0"/>
+    <geom name="wall_back_inner" type="box" pos="0.0 5.472 0.4" size="2.0 0.003 0.4" material="wall_orange" rgba="0.8745 0.4588 0 1" contype="0" conaffinity="0"/>
+    <geom name="wall_front_left_inner" type="box" pos="-1.25 -0.472 0.4" size="0.75 0.003 0.4" material="wall_orange" rgba="0.8745 0.4588 0 1" contype="0" conaffinity="0"/>
+    <geom name="wall_front_right_inner" type="box" pos="1.25 -0.472 0.4" size="0.75 0.003 0.4" material="wall_orange" rgba="0.8745 0.4588 0 1" contype="0" conaffinity="0"/>
+
+    <!-- Black boundary lines -->
+    <geom name="line_left" type="box" pos="-1.96 2.5 0.004" size="0.01 3.0 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="line_right" type="box" pos="1.96 2.5 0.004" size="0.01 3.0 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="line_back" type="box" pos="0.0 5.46 0.004" size="2.0 0.01 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="line_front_left" type="box" pos="-1.25 -0.46 0.004" size="0.75 0.01 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="line_front_right" type="box" pos="1.25 -0.46 0.004" size="0.75 0.01 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <!-- Start zone: 1m x 1m red dashed outline -->
+    <geom type="box" pos="-0.35 -1.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.05 -1.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="0.25 -1.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.35 0.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.05 0.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="0.25 0.0 0.006" size="0.12 0.012 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.5 -0.65 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.5 -0.35 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="-0.5 -0.95 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="0.5 -0.65 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="0.5 -0.35 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+    <geom type="box" pos="0.5 -0.95 0.006" size="0.012 0.12 0.002" material="line_red" rgba="1 0 0 1" contype="0" conaffinity="0"/>
+
+    <!-- Return zones: 400 mm squares, 400 mm gap, 600 mm margin -->
+    <geom name="return_food" type="box" pos="-1.2 4.7 0.005" size="0.2 0.2 0.002" material="zone_green" rgba="0.50 0.78 0.28 1" contype="0" conaffinity="0"/>
+    <geom name="return_tool" type="box" pos="-0.4 4.7 0.005" size="0.2 0.2 0.002" material="zone_gray" rgba="0.54 0.54 0.54 1" contype="0" conaffinity="0"/>
+    <geom name="return_instrument" type="box" pos="0.4 4.7 0.005" size="0.2 0.2 0.002" material="zone_blue" rgba="0.18 0.33 0.63 1" contype="0" conaffinity="0"/>
+    <geom name="return_medical" type="box" pos="1.2 4.7 0.005" size="0.2 0.2 0.002" material="zone_red" rgba="0.85 0.12 0 1" contype="0" conaffinity="0"/>
+
+    <!-- Storage zone outlines: 250 mm square, 600 mm spacing -->
+    <geom name="slot_00_t" type="box" pos="-1.275 2.375 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_00_b" type="box" pos="-1.275 2.125 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_00_l" type="box" pos="-1.4 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_00_r" type="box" pos="-1.15 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_01_t" type="box" pos="-0.425 2.375 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_01_b" type="box" pos="-0.425 2.125 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_01_l" type="box" pos="-0.55 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_01_r" type="box" pos="-0.3 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_02_t" type="box" pos="0.425 2.375 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_02_b" type="box" pos="0.425 2.125 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_02_l" type="box" pos="0.3 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_02_r" type="box" pos="0.55 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_03_t" type="box" pos="1.275 2.375 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_03_b" type="box" pos="1.275 2.125 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_03_l" type="box" pos="1.15 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_03_r" type="box" pos="1.4 2.25 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_10_t" type="box" pos="-1.275 1.525 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_10_b" type="box" pos="-1.275 1.275 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_10_l" type="box" pos="-1.4 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_10_r" type="box" pos="-1.15 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_11_t" type="box" pos="-0.425 1.525 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_11_b" type="box" pos="-0.425 1.275 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_11_l" type="box" pos="-0.55 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_11_r" type="box" pos="-0.3 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_12_t" type="box" pos="0.425 1.525 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_12_b" type="box" pos="0.425 1.275 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_12_l" type="box" pos="0.3 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_12_r" type="box" pos="0.55 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <geom name="slot_13_t" type="box" pos="1.275 1.525 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_13_b" type="box" pos="1.275 1.275 0.004" size="0.125 0.005 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_13_l" type="box" pos="1.15 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+    <geom name="slot_13_r" type="box" pos="1.4 1.4 0.004" size="0.005 0.125 0.001" material="line_black" rgba="0 0 0 1" contype="0" conaffinity="0"/>
+
+    <!--
+    Speed bump: 350 mm wide, 50 mm high, center 2500 mm from far wall
+    <geom name="speed_bump_base" class="field_geom" type="box" pos="0 3.0 0.025" size="2.0 0.175 0.025" material="speed_black" rgba="0 0 0 1"/>
+    <geom name="speed_stripe_0" type="box" pos="-1.84 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_1" type="box" pos="-1.52 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_2" type="box" pos="-1.20 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_3" type="box" pos="-0.88 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_4" type="box" pos="-0.56 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_5" type="box" pos="-0.24 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_6" type="box" pos="0.08 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_7" type="box" pos="0.40 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_8" type="box" pos="0.72 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_9" type="box" pos="1.04 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_10" type="box" pos="1.36 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    <geom name="speed_stripe_11" type="box" pos="1.68 3.0 0.026" size="0.08 0.175 0.026" material="speed_yellow" rgba="1 0.82 0.1 1"/>
+    -->
+
+    <!-- Display board -->
+    <body name="display_board" pos="0 5.44 1.55">
+      <geom type="box" size="0.83 0.025 0.48" material="display_board_back" rgba="0.72 0.74 0.78 1" contype="0" conaffinity="0"/>
+      <geom class="display_face_mesh" pos="0 -0.026 0" euler="1.57079632679 0 0" material="display_board_mat"/>
+    </body>
+
+    <!-- Movable supply boxes -->
+    <body name="food_box_1" pos="-1.275 2.25 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_food_label"/>
+    </body>
+    <body name="instrument_box_1" pos="-0.425 2.25 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_instrument_label"/>
+    </body>
+    <body name="food_box_2" pos="0.425 2.25 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_food_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_food_label"/>
+    </body>
+    <body name="medical_box_1" pos="1.275 2.25 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_medical_label"/>
+    </body>
+
+    <body name="medical_box_2" pos="-1.275 1.4 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_medical_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_medical_label"/>
+    </body>
+    <body name="instrument_box_2" pos="-0.425 1.4 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_instrument_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_instrument_label"/>
+    </body>
+    <body name="tool_box_1" pos="0.425 1.4 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_tool_label"/>
+    </body>
+    <body name="tool_box_2" pos="1.275 1.4 0.125">
+      <joint class="box_geom"/>
+      <geom class="box_geom" material="box_cardboard" rgba="0.76 0.66 0.48 1"/>
+      <geom class="label_face_mesh" pos="0 0.1266 0" euler="-1.57079632679 0 3.14159265359" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 -0.1266 0" euler="1.57079632679 0 0" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0.1266 0 0" euler="0 1.57079632679 1.57079632679" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="-0.1266 0 0" euler="0 -1.57079632679 -1.57079632679" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 0 0.1266" material="box_tool_label"/>
+      <geom class="label_face_mesh" pos="0 0 -0.1266" euler="3.14159265359 0 0" material="box_tool_label"/>
+    </body>
+  </worldbody>
+</mujoco>
