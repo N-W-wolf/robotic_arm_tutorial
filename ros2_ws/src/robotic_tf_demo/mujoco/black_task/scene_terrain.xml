@@ -7,7 +7,7 @@
   <include file="__ARM_MODEL_PATH__" />
 
   <compiler angle="radian" coordinate="local"/>
-  <option timestep="0.01" gravity="0 0 0" iterations="40" integrator="RK4"/>
+  <option timestep="0.01" gravity="0 0 -9.81" iterations="40" integrator="RK4"/>
 
   <visual>
     <global azimuth="145" elevation="-28"/>

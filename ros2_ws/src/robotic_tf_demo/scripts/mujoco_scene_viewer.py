@@ -61,8 +61,13 @@ def publish_base_transforms(
     base_tf.transform.translation.x = float(data.xpos[base_body_id][0])
     base_tf.transform.translation.y = float(data.xpos[base_body_id][1] + MAP_WORLD_Y_OFFSET)
     base_tf.transform.translation.z = float(data.xpos[base_body_id][2])
-    # The platform has slide joints only, so its orientation remains identity.
-    base_tf.transform.rotation.w = 1.0
+    # Publish the true orientation read from MuJoCo.
+    # MuJoCo quaternions are wxyz; geometry_msgs/Quaternion is xyzw.
+    quat = data.xquat[base_body_id]
+    base_tf.transform.rotation.x = float(quat[1])
+    base_tf.transform.rotation.y = float(quat[2])
+    base_tf.transform.rotation.z = float(quat[3])
+    base_tf.transform.rotation.w = float(quat[0])
     dynamic_broadcaster.sendTransform(base_tf)
 
 
@@ -132,9 +137,12 @@ def main() -> None:
         with mujoco.viewer.launch_passive(model, data) as viewer:
             while viewer.is_running() and rclpy.ok():
                 step_start = time.perf_counter()
-                # The platform is a mocap body. No physics step is applied, so
-                # gravity, contact, and inertia cannot move it without mouse input.
-                mujoco.mj_forward(model, data)
+                # Step the physics so mouse-drag perturbations (forces applied
+                # to non-mocap bodies) are integrated and take effect.
+                # The scene has normal gravity; the unactuated arm hangs under
+                # its own weight until a controller takes over, and the boxes
+                # rest on the floor. The mocap platform is unaffected.
+                mujoco.mj_step(model, data)
                 now = node.get_clock().now().to_msg()
                 publish_base_transforms(node, dynamic_broadcaster, base_body_id, data)
                 publish_joint_states(now)
